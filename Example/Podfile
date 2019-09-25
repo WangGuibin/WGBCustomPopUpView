@@ -4,6 +4,9 @@ platform :ios, '8.0'
 
 target 'WGBCustomPopUpView_Example' do
   pod 'WGBCustomPopUpView', :path => '../'
+  pod 'WGBCocoaKit'
+  pod 'ReactiveObjC','~>3.1.1'
+  
 
   target 'WGBCustomPopUpView_Tests' do
     inherit! :search_paths

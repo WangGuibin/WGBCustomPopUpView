@@ -1,0 +1,31 @@
+PODS:
+  - ReactiveObjC (3.1.1)
+  - WGBCocoaKit (1.1.1):
+    - WGBCocoaKit/FoundationModule (= 1.1.1)
+    - WGBCocoaKit/UIKitModule (= 1.1.1)
+  - WGBCocoaKit/FoundationModule (1.1.1)
+  - WGBCocoaKit/UIKitModule (1.1.1)
+  - WGBCustomPopUpView (0.1.0)
+
+DEPENDENCIES:
+  - ReactiveObjC (~> 3.1.1)
+  - WGBCocoaKit
+  - WGBCustomPopUpView (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - ReactiveObjC
+    - WGBCocoaKit
+
+EXTERNAL SOURCES:
+  WGBCustomPopUpView:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  ReactiveObjC: 011caa393aa0383245f2dcf9bf02e86b80b36040
+  WGBCocoaKit: 66e159fc3e67b5acca256083b5746c7a3fac602a
+  WGBCustomPopUpView: 4399747471f721b03d7217ed0c1997666c9b4312
+
+PODFILE CHECKSUM: 009ecc846d8c772afbb9f3ac037d53185799531e
+
+COCOAPODS: 1.7.5

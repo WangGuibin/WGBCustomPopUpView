@@ -1,0 +1,6 @@
+framework module Pods_WGBCustomPopUpView_Tests {
+  umbrella header "Pods-WGBCustomPopUpView_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
