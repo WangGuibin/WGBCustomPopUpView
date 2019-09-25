@@ -26,6 +26,35 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+## Usage
+
+```objc
+
+//实例化	
+  	WGBCustomPopUpView *popUpView = [[WGBCustomPopUpView alloc] init];
+  	
+	UIView *bgView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	bgView.userInteractionEnabled = YES;
+	bgView.backgroundColor = [UIColor clearColor] ;
+
+  	UIView *redView = [[UIView alloc] init];
+  	redView.frame = CGRectMake(0,kScreenHeight-200,375,200);
+  	redView.backgroundColor =[UIColor redColor];
+	redView.center = CGPointMake(bgView.frame.size.width/2, bgView.frame.size.height/2);
+	[bgView addSubview: redView];
+
+
+	/// 以下三行才是关键代码 
+  	popUpView.contentView = redView;  //设置内容视图
+  	popUpView.animationType = arc4random()%6;  //设置弹窗动画类型  随机枚举值  
+  	[popUpView show]; // 弹出来瞧瞧
+
+  	// 必要的时候消除弹窗
+  		popUpView.touchDismiss = YES;
+  		[popUpView dismiss];
+
+```
+
 ## Requirements
 
 ## Installation
