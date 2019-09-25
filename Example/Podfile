@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'WGBCustomPopUpView_Example' do
+  pod 'WGBCustomPopUpView', :path => '../'
+
+  target 'WGBCustomPopUpView_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
