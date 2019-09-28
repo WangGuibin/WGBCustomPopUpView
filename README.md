@@ -13,16 +13,26 @@
 ## Example
 **图片仅供参考,具体还是看代码比较好**
 `pic is cheap , show the code `
+| 效果 | 预览图 |
+| ----- | :----------------------------------------------------------: |
+| **示例1打赏弹窗** | <img src="./ExampleImages/1.png" alt="1" style="zoom:50%;" /> |
+|   **示例2引导弹窗**   | <img src="./ExampleImages/2.png" alt="2" style="zoom:50%;" /> |
+|  **示例3提示消息**    | <img src="./ExampleImages/3.png" alt="3" style="zoom:50%;" /> |
+|   **示例4系统Alert封装**    | <img src="./ExampleImages/4.png" alt="4" style="zoom:50%;" /> |
+|   **示例5系统AlertSheet封装**    | <img src="./ExampleImages/5.png" alt="5" style="zoom:50%;" /> |
 
-![1](./ExampleImages/1.png) 
 
-![2](./ExampleImages/2.png) 
 
-![3](./ExampleImages/3.png) 
 
-![4](./ExampleImages/4.png) 
 
-![5](./ExampleImages/5.png) 
+
+
+
+
+
+
+
+
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
