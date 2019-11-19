@@ -78,7 +78,7 @@ WGBCustomPopUpView is available through [CocoaPods](https://cocoapods.org). To i
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'WGBCustomPopUpView',‘~>1.0.0’
+pod 'WGBCustomPopUpView',‘~>1.0.1’
 ```
 
 ## Author
