@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WGBCustomPopUpView'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = '一个简单通用的弹窗组件,可定制化自定义/各种弹窗样式'
 
 # This description is used to generate tags and improve search results.
