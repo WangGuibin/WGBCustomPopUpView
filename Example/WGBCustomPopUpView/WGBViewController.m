@@ -21,7 +21,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     refreshControl.backgroundColor = [UIColor whiteColor];
     refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"下拉刷新" attributes:@{NSForegroundColorAttributeName : [UIColor lightGrayColor]}];

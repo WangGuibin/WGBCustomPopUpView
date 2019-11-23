@@ -9,17 +9,11 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
-
-
-// Include any system framework and library headers here that should be included in all compilation units.
-// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
-
 #import <ReactiveObjC.h>
 #import <WGBCustomPopUpView.h>
 #import <WGBCocoa.h>
 #import "WGBCustomButton.h"
 #import "WGBAlertTool.h"
-
 
 ///颜色随机
 #define randomColor        [UIColor colorWithRed:arc4random()%256/255.0 green:arc4random()%256/255.0 blue:arc4random()%256/255.0 alpha:1.0]
