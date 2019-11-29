@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WGBCustomPopUpView'
-  s.version          = '1.0.1'
+  s.version          = '1.0.2'
   s.summary          = '一个简单通用的弹窗组件,可定制化自定义/各种弹窗样式'
 
 # This description is used to generate tags and improve search results.
@@ -18,7 +18,10 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+更新内容：
+    1. 支持动画展示过程，展示动画结束以及弹窗移除动画结束的回调
+    2. touchDismiss属性的健壮性维护
+    3. 添加修改一些注释文档
                        DESC
 
   s.homepage         = 'https://github.com/Wangguibin/WGBCustomPopUpView'

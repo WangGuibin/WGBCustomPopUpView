@@ -42,14 +42,14 @@
 #endif
 
 
-/// 暂时想到这点简陋的动画 后续拓展 持续更新吧~
+///动画类型枚举
 typedef NS_ENUM(NSInteger,WGBAlertAnimationType) {
-	WGBAlertAnimationTypeCenter = 0, //从中心弹出
-	WGBAlertAnimationTypeUp ,//从顶部弹出
-	WGBAlertAnimationTypeBottom,//从底部弹出
-	WGBAlertAnimationTypeLeft,//从左边弹出
-	WGBAlertAnimationTypeRight,//从右边弹出
-	WGBAlertAnimationTypeAlert //类似系统弹出窗动画
+    WGBAlertAnimationTypeCenter = 0, //从中心弹出
+    WGBAlertAnimationTypeUp ,//从顶部弹出
+    WGBAlertAnimationTypeBottom,//从底部弹出
+    WGBAlertAnimationTypeLeft,//从左边弹出
+    WGBAlertAnimationTypeRight,//从右边弹出
+    WGBAlertAnimationTypeAlert //类似系统弹出窗动画
 };
 
 @interface UIView (WGBAlertExtra)
@@ -63,50 +63,50 @@ typedef NS_ENUM(NSInteger,WGBAlertAnimationType) {
 @property (nonatomic, assign) CGPoint origin;
 @end
 
+
 @interface WGBCustomPopUpView : UIView
-/*!
- @property
- @abstract 展示内容的视图view
- */
+
+///展示内容的视图view 填充好待展示的内容View
 @property (strong,nonatomic) UIView *contentView ;
-/*!
- * `contentView` 必须要在动画类型之前设置 不然无效
- @property
- @abstract 弹出动画类型 Default type is WGBAlertAnimationTypeCenter
- */
+
+///`contentView` 必须要在动画类型之前设置 不然无效
 @property (assign,nonatomic) WGBAlertAnimationType  animationType;
 
-//动画时长 默认0.25s  default is 0.25 seconds
+///动画时长 默认0.25s  default is 0.25 seconds
 @property (nonatomic,assign) CGFloat animationDuration;
 
-/*!
- @property
- @abstract 是否点击背景移除 默认否 the background layer dismiss. Default is NO
- */
+///是否点击背景移除 默认否 the background layer dismiss. Default is NO
 @property (assign,nonatomic) BOOL touchDismiss;
-/**  蒙层的透明度 默认 0.45  maskLayer's backgroundColor alpha, default is 0.45*/
+
+///蒙层的透明度 默认 0.45  maskLayer's backgroundColor alpha, default is 0.45
 @property (nonatomic,assign) CGFloat coverMaskAlpha;
 
-//加在哪一个父视图上 指定父视图 传nil 或者 调用`- (void)show`都是默认在`keywindow`上的
+///加在哪一个父视图上 指定父视图 传nil 或者 调用`- (void)show`都是默认在`keywindow`上的
 - (void)showFromSuperView:(UIView *)superView;
 
-/*!
- @method 展示到window上
- @abstract show a alert on keywindow  
- @discussion 这个方法必须实现,不然看不见任何效果
- */
+/// 展示到window上
+/// show a alert on keywindow
+/// 这个方法必须实现,不然看不见任何效果
 - (void)show;
-/*!
- @method 移除弹窗视图
- @abstract remove alert layer from superView
- */
+
+///移除弹窗视图 remove alert layer from superView
 - (void)dismiss;//消失
+
+///展示动画过程中回调
+@property (nonatomic,copy) void(^showAnimationDidStart) (WGBCustomPopUpView *popUpView);
+///展示动画执行结束回调
+@property (nonatomic,copy) void(^showAnimationDidEnd) (WGBCustomPopUpView *popUpView);
+///移除动画过程中 。。。 这是个伪需求 。。。 
+///移除动画结束回调
+@property (nonatomic,copy) void(^dismissAnimationDidEnd) (WGBCustomPopUpView *popUpView);
+
+
 @end
 
 
 @interface WGBAlertViewController : UIViewController
 
-#pragma mark - 指定实例化方法
+
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil __attribute__((unavailable("initWithNibName:bundle:方法不可用,请用 initWithContentViewController:")));
 
 - (instancetype)init __attribute__((unavailable("init方法不可用,请用 initWithContentViewController:")));
@@ -126,7 +126,7 @@ typedef NS_ENUM(NSInteger,WGBAlertAnimationType) {
 @property (nonatomic,strong,readonly) UIViewController *contentViewController;
 /*!
  @property
- @abstract 是否需要蒙层 默认NO 其实就是设置传入的控制器的view的背景色(可自定义) 默认是黑色 alpha 0.45 
+ @abstract 是否需要蒙层 默认NO 其实就是设置传入的控制器的view的背景色(可自定义) 默认是黑色 alpha 0.45
  */
 @property (nonatomic,assign) BOOL isMask;
 

@@ -33,11 +33,9 @@
     [attributeStr addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHexString:@"#007BFA"] range:firstRange];
     [attributeStr addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHexString:@"#FFAD2E"] range:secondRange];
     alertView.messageLabel.attributedText = attributeStr;
-    
-    UIView *bgView = [[UIView alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    [bgView addSubview: alertView];
-    alertView.center = CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
-    pop.contentView = bgView;
+
+    pop.touchDismiss = YES; //点击除弹窗体以外地方弹窗移除
+    pop.contentView = alertView;
     pop.animationType = WGBAlertAnimationTypeCenter;
     [pop show];
     [alertView setCancelBlock:^{

@@ -130,7 +130,7 @@
 @end
 
 
-@interface WGBCustomPopUpView ()
+@interface WGBCustomPopUpView ()<CAAnimationDelegate>
 
 @end
 
@@ -138,9 +138,7 @@
 
 - (instancetype)init{
     if (self = [super initWithFrame:[UIScreen mainScreen].bounds]) {
-        self.coverMaskAlpha = 0.45;
-        self.animationDuration = 0.25;
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.coverMaskAlpha];
+        [self initializeCongfig];
     }
     return self;
 }
@@ -150,12 +148,26 @@
     frame = [UIScreen mainScreen].bounds; //不管你外面怎么设置 我都是全屏的 (常规操作)
     self = [super initWithFrame:frame];
     if (self) {
-        /// 初始化配置
-        self.coverMaskAlpha = 0.45;
-        self.animationDuration = 0.25;
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.coverMaskAlpha];
+        [self initializeCongfig];
     }
     return self;
+}
+
+///虽然不太可能会用到IB 但顺带也支持一下吧
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (self) {
+        [self initializeCongfig];
+    }
+    return self;
+}
+
+/// 初始化配置
+- (void)initializeCongfig{
+    self.coverMaskAlpha = 0.45;
+    self.animationDuration = 0.25;
+    self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.coverMaskAlpha];
 }
 
 
@@ -165,7 +177,7 @@
     [self addSubview: contentView];
 }
 
-    /// 设置动画弹出的类型 初始化内容视图的frame 根据不同类型作动画处理
+/// 设置动画弹出的类型 初始化内容视图的frame 根据不同类型作动画处理
 - (void)setAnimationType:(WGBAlertAnimationType)animationType{
     _animationType = animationType;
     [self initContentViewFrameWithAnimationType: animationType];
@@ -179,16 +191,25 @@
     _touchDismiss = touchDismiss;
     if (touchDismiss) {
         self.userInteractionEnabled = YES;
-        UITapGestureRecognizer *tap = [ [UITapGestureRecognizer alloc]  initWithTarget:self action:@selector(touchDismissAction)];
+        UITapGestureRecognizer *tap = [ [UITapGestureRecognizer alloc]  initWithTarget:self action:@selector(touchDismissAction:)];
         [self addGestureRecognizer: tap];
     }
 }
 
-- (void)touchDismissAction{
-    [self dismiss];
+- (void)touchDismissAction:(UITapGestureRecognizer *)tap{
+    //如果是`contentView`本身是全屏的 那不用走下面的判断了都
+    if (CGRectEqualToRect(self.contentView.frame, UIScreen.mainScreen.bounds)) {
+        [self dismiss];
+        return;
+    }
+    
+    CGPoint touchPoint = [tap locationInView: self];
+    if (!CGRectContainsPoint(self.contentView.frame, touchPoint)) {
+        [self dismiss];
+    }
 }
 
-    ///MARK:- 初始化内容视图的位置
+///MARK:- 初始化内容视图的位置
 - (void)initContentViewFrameWithAnimationType:(WGBAlertAnimationType )animationType{
     CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
     self.contentView.center = center;
@@ -196,40 +217,40 @@
     CGFloat viewY  = self.contentView.y;
     CGFloat viewW  = self.contentView.width;
     CGFloat viewH = self.contentView.height;
-
+    
     switch (animationType) {
         case WGBAlertAnimationTypeCenter:{
             self.contentView.center = center;
         }
             break;
         case WGBAlertAnimationTypeUp:{
-                // 初始化在屏幕上方看不见🙈的位置
+            // 初始化在屏幕上方看不见🙈的位置
             viewY  = - viewH;
             self.contentView.frame = CGRectMake(viewX, viewY, viewW, viewH);
         }
             break;
         case WGBAlertAnimationTypeBottom:{
-                // 初始化在屏幕下方看不见🙈的位置
+            // 初始化在屏幕下方看不见🙈的位置
             viewY  =  KHIGHT ;
             self.contentView.frame = CGRectMake(viewX, viewY, viewW, viewH);
         }
             break;
         case WGBAlertAnimationTypeLeft:{
-                // 初始化在屏幕左方看不见🙈的位置
+            // 初始化在屏幕左方看不见🙈的位置
             viewX  =  -viewW ;
             self.contentView.frame = CGRectMake(viewX, viewY, viewW, viewH);
         }
             break;
         case WGBAlertAnimationTypeRight:{
-                // 初始化在屏幕右方看不见🙈的位置
+            // 初始化在屏幕右方看不见🙈的位置
             viewX  =  KWIDTH  ;
             self.contentView.frame = CGRectMake(viewX, viewY, viewW, viewH);
         }
             break;
-            case WGBAlertAnimationTypeAlert:{
-                viewY = KHIGHT;
-                self.contentView.frame = CGRectMake(viewX, viewY, viewW , viewH);
-            }
+        case WGBAlertAnimationTypeAlert:{
+            viewY = KHIGHT;
+            self.contentView.frame = CGRectMake(viewX, viewY, viewW , viewH);
+        }
             break;
         default:{
             self.contentView.center = center;
@@ -238,22 +259,42 @@
     }
 }
 
-    ///MARK:- 从中心弹出的动画
+///MARK:- 从中心弹出的动画
 - (void)showAlertCenterScaleAnimation{
     self.contentView.transform = CGAffineTransformIdentity;
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
     animation.fromValue = @0;
     animation.toValue = @1;
     animation.duration = self.animationDuration;
+    animation.delegate = self;
     animation.removedOnCompletion =YES;
     animation.fillMode = kCAFillModeForwards;
     [self.contentView.layer addAnimation: animation forKey:nil];
 }
-    ///MARK:- 从中心弹出的动画
+
+
+
+- (void)animationDidStart:(CAAnimation *)anim{
+    CABasicAnimation *basicAnimation = (CABasicAnimation *)anim;
+    if ([basicAnimation.keyPath isEqualToString:@"transform.scale"]) {
+        !self.showAnimationDidStart? : self.showAnimationDidStart(self);
+    }
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
+    CABasicAnimation *basicAnimation = (CABasicAnimation *)anim;
+    if (flag && [basicAnimation.keyPath isEqualToString:@"transform.scale"]) {
+        !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
+    }
+}
+
+
+///MARK:- 从中心弹出的动画
 - (void)dismissAlertCenterScaleAnimation{
     [UIView animateWithDuration:self.animationDuration animations:^{
         self.contentView.transform = CGAffineTransformMakeScale(0.1, 0.1);
     } completion:^(BOOL finished) {
+        !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
         [self removeFromSuperview];
     }];
 }
@@ -273,10 +314,10 @@
             return;
         }
     }
-
+    
     [self showBackgroundFromSuperView: superView]; // 蒙版
     
-__block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
+    __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
     switch (self.animationType) {
         case WGBAlertAnimationTypeCenter:{
             [self showAlertCenterScaleAnimation];
@@ -285,45 +326,55 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
         case WGBAlertAnimationTypeUp:{
             [UIView animateWithDuration:self.animationDuration animations:^{
                 self.contentView.center = center;
+                !self.showAnimationDidStart? : self.showAnimationDidStart(self);
             } completion:^(BOOL finished) {
+                !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
             }];
         }
             break;
         case WGBAlertAnimationTypeBottom:{
             [UIView animateWithDuration:self.animationDuration animations:^{
                 self.contentView.center = center;
+                !self.showAnimationDidStart? : self.showAnimationDidStart(self);
             } completion:^(BOOL finished) {
+                !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
             }];
         }
             break;
         case WGBAlertAnimationTypeLeft:{
             [UIView animateWithDuration:self.animationDuration delay:0 usingSpringWithDamping:0.75 initialSpringVelocity:0 options:(UIViewAnimationOptionLayoutSubviews) animations:^{
                 self.contentView.center = center;
+                !self.showAnimationDidStart? : self.showAnimationDidStart(self);
             } completion:^(BOOL finished) {
+                !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
             }];
         }
             break;
         case WGBAlertAnimationTypeRight:{
             [UIView animateWithDuration:self.animationDuration delay:0 usingSpringWithDamping:0.75 initialSpringVelocity:0 options:(UIViewAnimationOptionLayoutSubviews) animations:^{
                 self.contentView.center = center;
+                !self.showAnimationDidStart? : self.showAnimationDidStart(self);
             } completion:^(BOOL finished) {
+                !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
             }];
         }
             break;
-            case WGBAlertAnimationTypeAlert:{
+        case WGBAlertAnimationTypeAlert:{
+            UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+            window.userInteractionEnabled = NO;
+            self.contentView.alpha = 0;
+            self.contentView.transform = CGAffineTransformMakeScale(1.2, 1.2);
+            [UIView animateWithDuration:self.animationDuration animations:^{
+                self.contentView.center = center;
+                self.contentView.alpha = 1.0;
+                self.contentView.transform = CGAffineTransformIdentity;
+                !self.showAnimationDidStart? : self.showAnimationDidStart(self);
+            } completion:^(BOOL finished) {
                 UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-                window.userInteractionEnabled = NO;
-                self.contentView.alpha = 0;
-                self.contentView.transform = CGAffineTransformMakeScale(1.2, 1.2);
-                [UIView animateWithDuration:self.animationDuration animations:^{
-                    self.contentView.center = center;
-                    self.contentView.alpha = 1.0;
-                    self.contentView.transform = CGAffineTransformIdentity;
-                } completion:^(BOOL finished) {
-                    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-                    window.userInteractionEnabled = YES;
-                }];
-            }
+                window.userInteractionEnabled = YES;
+                !self.showAnimationDidEnd? : self.showAnimationDidEnd(self);
+            }];
+        }
             break;
         default:{
             [self showAlertCenterScaleAnimation];
@@ -345,6 +396,7 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
             [UIView animateWithDuration:self.animationDuration animations:^{
                 self.contentView.y = -viewH;
             } completion:^(BOOL finished) {
+                !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
                 [self removeFromSuperview];
             }];
         }
@@ -353,6 +405,7 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
             [UIView animateWithDuration:self.animationDuration animations:^{
                 self.contentView.y = KHIGHT;
             } completion:^(BOOL finished) {
+                !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
                 [self removeFromSuperview];
             }];
         }
@@ -361,6 +414,7 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
             [UIView animateWithDuration:self.animationDuration delay:0 usingSpringWithDamping:0.75 initialSpringVelocity:0 options:(UIViewAnimationOptionLayoutSubviews) animations:^{
                 self.contentView.x =  -viewW;
             } completion:^(BOOL finished) {
+                !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
                 [self removeFromSuperview];
             }];
         }
@@ -369,26 +423,28 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
             [UIView animateWithDuration:self.animationDuration delay:0 usingSpringWithDamping:0.75 initialSpringVelocity:0 options:(UIViewAnimationOptionLayoutSubviews) animations:^{
                 self.contentView.x = KWIDTH;
             } completion:^(BOOL finished) {
+                !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
                 [self removeFromSuperview];
             }];
         }
             break;
-            case WGBAlertAnimationTypeAlert:{
+        case WGBAlertAnimationTypeAlert:{
+            UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+            window.userInteractionEnabled = NO;
+            [UIView animateWithDuration:self.animationDuration animations:^{
+                CGRect frame = self.contentView.frame;
+                frame.origin.y += KHIGHT;
+                self.contentView.frame = frame;
+                self.contentView.transform = CGAffineTransformMakeScale(0.8, 0.8);
+                self.contentView.alpha = 0 ;
+                self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent: 0];
+            } completion:^(BOOL finished) {
                 UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-                window.userInteractionEnabled = NO;
-                [UIView animateWithDuration:self.animationDuration animations:^{
-                    CGRect frame = self.contentView.frame;
-                    frame.origin.y += KHIGHT;
-                    self.contentView.frame = frame;
-                    self.contentView.transform = CGAffineTransformMakeScale(0.8, 0.8);
-                    self.contentView.alpha = 0 ;
-                    self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent: 0];
-                } completion:^(BOOL finished) {
-                    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-                    window.userInteractionEnabled = YES;
-                    [self removeFromSuperview];
-                }];
-            }
+                window.userInteractionEnabled = YES;
+                !self.dismissAnimationDidEnd? : self.dismissAnimationDidEnd(self);
+                [self removeFromSuperview];
+            }];
+        }
             break;
         default:{
             [self dismissAlertCenterScaleAnimation];
@@ -397,7 +453,7 @@ __block    CGPoint center =  CGPointMake(KWIDTH/2.0, KHIGHT/2.0);
     }
 }
 
-/// 加蒙版视图动画
+/// 加蒙版视图 
 - (void)showBackgroundFromSuperView:(UIView *)superView{
     self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.coverMaskAlpha];
     [superView addSubview: self];
