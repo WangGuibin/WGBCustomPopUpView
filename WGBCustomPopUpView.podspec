@@ -18,11 +18,10 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-更新内容：
+    更新内容：
     1. 支持动画展示过程，展示动画结束以及弹窗移除动画结束的回调
     2. touchDismiss属性的健壮性维护
-    3. 添加修改一些注释文档
-                       DESC
+  DESC
 
   s.homepage         = 'https://github.com/Wangguibin/WGBCustomPopUpView'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
